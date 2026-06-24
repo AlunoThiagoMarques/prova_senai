@@ -1,0 +1,2 @@
+MVC - Model (Banco de dados) - View (Telas) - Controller (Regra de Negócio)
+MVT - Model (banco de dados) - View (Regra de Negócio) - Templates (Telas)

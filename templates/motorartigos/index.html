@@ -1,0 +1,45 @@
+{% extends "motorartigos/base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Artigos</title>
+</head>
+<body>
+
+    {% block content %}
+    
+    
+    <a href="{% url 'artigo' %}">
+
+        <img src="{%static 'img/bird.png'%}" alt="Logo bird verde">
+    </a>
+    <img src="{%static 'img/claude-color.png'%}" alt="Logo claude">
+    <img src="{%static 'img/gemini.png'%}" alt="Logo Gemini">
+    <img src="{%static 'img/langflow.png'%}" alt="Logo bird verde">
+    <img src="{%static 'img/python-logo.png'%}" alt="Logo bird verde">
+
+    <ul> 
+        <h1> Autores Cadastrados</h1>
+
+        {% for autor in autores %}
+            <li class="autorContainer">
+                <strong>ID do Autor: </strong> {{autor.id}} <br>
+                <strong>Nome: </strong> {{autor.nome}} <br>
+                <strong>Biografia: </strong> {{autor.biografia}} <br>
+                <strong>Email: </strong> {{autor.email}} <br>
+            </li> <br>
+            <hr>
+        
+            {%empty%}
+                <p> Nenhum valor encontrado</p>
+        {% endfor %}
+        
+    </ul>
+    
+    {% endblock content %}
+
+</body>
+</html>

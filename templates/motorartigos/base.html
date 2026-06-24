@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Django DF</title>
+</head>
+<body>
+    <ul>
+        <li>Fundamentos Python</li>
+        <li>Fundamentos Redes</li>
+        <li>Fundamentos Nuvem</li>
+        <li>Fundamentos IA</li>
+        <li>Fundamentos Data Science</li>
+        <li>Fundamentos Django</li>
+    </ul>
+
+    <h1>Django DF</h1>
+    <p>Comunidade de Desenvolvedores do Distrito Federal</p>
+
+    {% block content %}{% endblock content %}
+
+    {% include "motorartigos/partials/_footer.html" %}
+
+
+</body>
+</html>
