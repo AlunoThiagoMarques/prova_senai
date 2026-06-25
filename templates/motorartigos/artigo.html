@@ -1,12 +1,68 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artigos</title>
-</head>
-<body>
-    <h1>Cheguei aqui</h1>
-</body>
-</html>
+{% extends "motorartigos/base.html" %}
+
+{% block content %}
+<main class="container py-5 fade-in" style="display: block !important; min-height: 80vh; color: #f8fafc;">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        
+        <a href="{% url 'index' %}" class="btn-back text-decoration-none mb-4 d-inline-flex align-items-center gap-2" style="color: var(--primary-accent, #38bdf8); font-weight: 600; font-size: 1.1rem;">
+          <i class="bi bi-arrow-left"></i> Voltar ao início
+        </a>
+
+        <div class="d-flex align-items-center gap-3 my-4">
+          <span class="badge bg-primary px-3 py-2" style="font-family: monospace; font-size: 0.9rem; background-color: #3b82f6 !important;">
+            Eixo Técnico: {{ artigo.id_fk_eixo.id }}
+          </span>
+          <div class="text-secondary d-flex align-items-center gap-2 small" style="color: #94a3b8 !important;">
+            <i class="bi bi-calendar-event"></i>
+            <span>Publicado em {{ artigo.data_publicacao|date:"d/m/Y" }}</span>
+          </div>
+        </div>
+
+        <h1 class="mb-4" style="font-weight: 800; font-size: 2.3rem; letter-spacing: -1px; color: #ffffff; line-height: 1.3;">
+            {{ artigo.texto|striptags|safe|truncatechars:65 }}
+        </h1>
+
+        <hr style="border-color: #334155; margin: 2rem 0;">
+
+        <article style="line-height: 1.8; font-size: 1.15rem; color: #cbd5e1; text-align: justify;">
+          {{ artigo.texto|safe|linebreaks }}
+        </article>
+
+        <div class="mt-5" style="background-color: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 2rem; display: flex; gap: 1.5rem; align-items: center;">
+          <div style="width: 56px; height: 56px; border-radius: 50%; background-color: #38bdf8; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.3rem;">
+              A{{ artigo.id_fk_autor_id }}
+          </div>
+          <div>
+            <span style="font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #94a3b8; font-family: monospace; font-weight: bold;">Autor Vinculado</span>
+            <h4 class="mt-1 mb-1 fw-bold text-white" style="font-size: 1.2rem;">Usuário Corporativo (ID: {{ artigo.id_fk_autor_id }})</h4>
+            <p style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 0;">Colaborador integrante do banco de dados do sistema Django.</p>
+          </div>
+        </div>
+
+        <div class="mt-5 pt-4" style="border-top: 1px solid #334155;">
+          <h4 class="fw-bold text-white mb-4" style="font-size: 1.3rem;">Outros artigos do mesmo eixo</h4>
+          <div class="row g-4">
+            {% for rec in recomendados %}
+                <div class="col-12 col-md-4">
+                    <a href="{% url 'artigo' rec.id %}" class="text-decoration-none d-block h-100" style="background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 1.25rem; transition: transform 0.2s;">
+                        <div class="small text-muted mb-2">
+                            <i class="bi bi-clock me-1"></i> Ver artigo
+                        </div>
+                        <h5 class="text-white fw-bold" style="font-size: 0.95rem; line-height: 1.4;">
+                            {{ rec.texto|striptags|safe|truncatechars:50 }}
+                        </h5>
+                    </a>
+                </div>
+            {% empty %}
+                <div class="col-12 text-muted small ps-2">
+                    <i class="bi bi-info-circle me-1"></i> Nenhum outro artigo associado ao eixo {{ artigo.id_fk_eixo.id }} no banco de dados.
+                </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,45 +1,117 @@
 {% extends "motorartigos/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Artigos</title>
-</head>
-<body>
 
-    {% block content %}
+{% block content %}
+<main id="home-view" class="container py-4 fade-in">
     
-    
-    <a href="{% url 'artigo' %}">
+    <div class="row align-items-center mb-5 mt-3">
+      <div class="col-lg-8">
+        <h1 class="fw-extrabold display-5 mb-3" style="letter-spacing: -1.5px; font-weight: 800;">
+          Conteúdos que impactam o mercado de <span style="color: var(--primary-accent);">tecnologia</span>.
+        </h1>
+        <p class="text-secondary fs-5" style="max-width: 650px;">
+          Descubra artigos profundos criados por especialistas e líderes de transformação. Filtre pelo seu eixo ou procure termos de interesse.
+        </p>
+      </div>
+    </div>
 
-        <img src="{%static 'img/bird.png'%}" alt="Logo bird verde">
-    </a>
-    <img src="{%static 'img/claude-color.png'%}" alt="Logo claude">
-    <img src="{%static 'img/gemini.png'%}" alt="Logo Gemini">
-    <img src="{%static 'img/langflow.png'%}" alt="Logo bird verde">
-    <img src="{%static 'img/python-logo.png'%}" alt="Logo bird verde">
+    <form method="GET" action="{% url 'index' %}" class="search-wrapper mb-5">
+      <div class="position-relative d-flex gap-2 w-100">
+        <i class="bi bi-search search-icon" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+        <input type="text" name="search" value="{{ search_query|default:'' }}" class="search-input" placeholder="Pesquisar artigos por título, autor ou tecnologia..." style="padding-left: 3rem; flex-grow: 1;">
+        <button type="submit" class="btn-search-submit">Buscar</button>
+      </div>
+      {% if selected_eixo_id %}
+        <input type="hidden" name="eixo" value="{{ selected_eixo_id }}">
+      {% endif %}
+    </form>
 
-    <ul> 
-        <h1> Autores Cadastrados</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="section-title">Eixos de Tecnologia</h3>
+    </div>
+    <div class="filter-pills" id="eixo-filters">
+        <a href="?eixo=1{% if search_query %}&search={{ search_query }}{% endif %}" 
+            class="filter-btn {% if selected_eixo_id == 1 or not selected_eixo_id %}active{% endif %}">
+            Todos os artigos
+        </a>
 
-        {% for autor in autores %}
-            <li class="autorContainer">
-                <strong>ID do Autor: </strong> {{autor.id}} <br>
-                <strong>Nome: </strong> {{autor.nome}} <br>
-                <strong>Biografia: </strong> {{autor.biografia}} <br>
-                <strong>Email: </strong> {{autor.email}} <br>
-            </li> <br>
-            <hr>
-        
-            {%empty%}
-                <p> Nenhum valor encontrado</p>
+        {% for eixo in eixos %}
+            <a href="?eixo={{ eixo.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                class="filter-btn {% if selected_eixo_id == eixo.id %}active{% endif %}">
+                {{ eixo.nome }}
+            </a>
         {% endfor %}
-        
-    </ul>
-    
-    {% endblock content %}
+    </div>
 
-</body>
-</html>
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+      <h3 class="section-title">Mais recentes</h3>
+    </div>
+
+    <div class="horizontal-slider" id="recent-slider">
+        {% for artigo in artigo_ultimos_7_dias %}
+            <div class="col-card">
+                <a href="{% url 'artigo' artigo.id %}" class="article-card text-decoration-none">
+                    <div class="card-body-custom">
+                        <div class="card-meta">
+                            <span><i class="bi bi-calendar3"></i> {{ artigo.data_publicacao|date:"d M Y" }}</span>
+                            <span class="badge bg-secondary opacity-75">{{ artigo.id_fk_eixo.nome }}</span>
+                        </div>
+
+                        <h4 class="card-title-custom">{{ artigo.texto|striptags|safe|truncatechars:50 }}</h4>
+                        <p class="card-preview-text">{{ artigo.texto|striptags|safe|truncatechars:120 }}</p>
+                        
+                        <div class="card-footer-custom">
+                            <div class="author-info">
+                                <div class="author-avatar-sm">{{ artigo.id_fk_autor.nome|slice:":2"|upper }}</div>
+                                <span class="author-name-sm">{{ artigo.id_fk_autor.nome }}</span>
+                            </div>
+                            <span class="read-more-link">Ler <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <div class="text-muted ps-3 py-3 small">
+                <i class="bi bi-info-circle me-1"></i> Nenhum artigo publicado nos últimos 7 dias.
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+      <h3 class="section-title" id="grid-title">
+        {% if selected_eixo_id and selected_eixo_id != 1 %}Artigos Filtrados{% else %}Todos os Artigos{% endif %}
+      </h3>
+    </div>
+    
+    <div class="row g-4" id="articles-grid">
+        {% for artigo in artigos %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'artigo' artigo.id %}" class="article-card text-decoration-none">
+                    <div class="card-body-custom">
+                        <div class="card-meta">
+                            <span><i class="bi bi-calendar3"></i> {{ artigo.data_publicacao|date:"d M Y" }}</span>
+                            <span class="badge bg-secondary opacity-75">{{ artigo.id_fk_eixo.nome }}</span>
+                        </div>
+
+                        <h4 class="card-title-custom">{{ artigo.texto|striptags|safe|truncatechars:50 }}</h4>
+                        <p class="card-preview-text">{{ artigo.texto|striptags|safe|truncatechars:120 }}</p>
+                        
+                        <div class="card-footer-custom">
+                            <div class="author-info">
+                                <div class="author-avatar-sm">{{ artigo.id_fk_autor.nome|slice:":2"|upper }}</div>
+                                <span class="author-name-sm">{{ artigo.id_fk_autor.nome }}</span>
+                            </div>
+                            <span class="read-more-link">Ler <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-folder-x text-secondary display-4"></i>
+                <p class="text-secondary mt-2">Nenhum artigo encontrado para os filtros aplicados.</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock content %}

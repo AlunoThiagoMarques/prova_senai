@@ -35,4 +35,4 @@ class Artigo(models.Model):
           return f"Artigo {self.id} - {self.data_publicacao}"
      
      class Meta:
-          db_table = ' artigo'
+          db_table = 'artigo'
