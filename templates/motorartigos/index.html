@@ -3,114 +3,136 @@
 
 {% block content %}
 <main id="home-view" class="container py-4 fade-in">
-    
+
     <div class="row align-items-center mb-5 mt-3">
-      <div class="col-lg-8">
-        <h1 class="fw-extrabold display-5 mb-3" style="letter-spacing: -1.5px; font-weight: 800;">
-          Conteúdos que impactam o mercado de <span style="color: var(--primary-accent);">tecnologia</span>.
-        </h1>
-        <p class="text-secondary fs-5" style="max-width: 650px;">
-          Descubra artigos profundos criados por especialistas e líderes de transformação. Filtre pelo seu eixo ou procure termos de interesse.
-        </p>
-      </div>
+        <div class="col-lg-8">
+            <h1 class="fw-extrabold display-5 mb-3" style="letter-spacing: -1.5px; font-weight: 800;">
+                Conteúdos que impactam o mercado de <span style="color: var(--primary-accent);">tecnologia</span>.
+            </h1>
+            <p class="text-secondary fs-5" style="max-width: 650px;">
+                Descubra artigos profundos criados por especialistas e líderes de transformação. Filtre pelo seu eixo ou
+                procure termos de interesse.
+            </p>
+        </div>
     </div>
 
     <form method="GET" action="{% url 'index' %}" class="search-wrapper mb-5">
-      <div class="position-relative d-flex gap-2 w-100">
-        <i class="bi bi-search search-icon" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
-        <input type="text" name="search" value="{{ search_query|default:'' }}" class="search-input" placeholder="Pesquisar artigos por título, autor ou tecnologia..." style="padding-left: 3rem; flex-grow: 1;">
-        <button type="submit" class="btn-search-submit">Buscar</button>
-      </div>
-      {% if selected_eixo_id %}
-        <input type="hidden" name="eixo" value="{{ selected_eixo_id }}">
-      {% endif %}
-    </form>
+        <div class="position-relative d-flex align-items-center gap-2 w-100">
+            <i class="bi bi-search search-icon"
+                style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted, #94a3b8);"></i>
 
+            <input type="text" name="search" value="{{ search_query|default:'' }}" class="search-input"
+                placeholder="Pesquisar artigos por título, autor ou tecnologia..."
+                style="padding-left: 3rem; flex-grow: 1; height: 48px; background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #f8fafc;">
+
+            <button type="submit" class="btn flex-shrink-0 d-inline-flex align-items-center gap-2"
+                style="height: 48px; background-color: #38bdf8; color: #0f172a; font-weight: 600; border-radius: 12px; border: none; padding: 0 1.5rem; transition: all 0.2s ease-in-out;"
+                onmouseover="this.style.backgroundColor='#0ea5e9'; this.style.transform='scale(1.02)'"
+                onmouseout="this.style.backgroundColor='#38bdf8'; this.style.transform='scale(1)'">
+                <i class="bi bi-search" style="font-size: 0.95rem;"></i>
+                Buscar
+            </button>
+        </div>
+        {% if selected_eixo_id %}
+        <input type="hidden" name="eixo" value="{{ selected_eixo_id }}">
+        {% endif %}
+    </form>
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="section-title">Eixos de Tecnologia</h3>
+        <h3 class="section-title">Eixos de Tecnologia</h3>
     </div>
     <div class="filter-pills" id="eixo-filters">
-        <a href="?eixo=1{% if search_query %}&search={{ search_query }}{% endif %}" 
+        <a href="?eixo=1{% if search_query %}&search={{ search_query }}{% endif %}"
             class="filter-btn {% if selected_eixo_id == 1 or not selected_eixo_id %}active{% endif %}">
             Todos os artigos
         </a>
 
         {% for eixo in eixos %}
-            <a href="?eixo={{ eixo.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
-                class="filter-btn {% if selected_eixo_id == eixo.id %}active{% endif %}">
-                {{ eixo.nome }}
-            </a>
+        <a href="?eixo={{ eixo.id }}{% if search_query %}&search={{ search_query }}{% endif %}"
+            class="filter-btn {% if selected_eixo_id == eixo.id %}active{% endif %}">
+            {{ eixo.nome }}
+        </a>
         {% endfor %}
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
-      <h3 class="section-title">Mais recentes</h3>
+        <h3 class="section-title">Mais recentes</h3>
     </div>
 
     <div class="horizontal-slider" id="recent-slider">
         {% for artigo in artigo_ultimos_7_dias %}
-            <div class="col-card">
-                <a href="{% url 'artigo' artigo.id %}" class="article-card text-decoration-none">
-                    <div class="card-body-custom">
-                        <div class="card-meta">
-                            <span><i class="bi bi-calendar3"></i> {{ artigo.data_publicacao|date:"d M Y" }}</span>
-                            <span class="badge bg-secondary opacity-75">{{ artigo.id_fk_eixo.nome }}</span>
-                        </div>
+        <div class="col-card">
+            <a href="{% url 'artigo' artigo.id %}"
+                class="article-card text-decoration-none d-flex flex-column h-100 overflow-hidden">
+                <div class="card-image-wrapper" style="height: 180px; overflow: hidden; flex-shrink: 0;">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+                        alt="Banner do artigo" class="w-100 h-100 object-fit-cover">
+                </div>
 
-                        <h4 class="card-title-custom">{{ artigo.texto|striptags|safe|truncatechars:50 }}</h4>
-                        <p class="card-preview-text">{{ artigo.texto|striptags|safe|truncatechars:120 }}</p>
-                        
-                        <div class="card-footer-custom">
-                            <div class="author-info">
-                                <div class="author-avatar-sm">{{ artigo.id_fk_autor.nome|slice:":2"|upper }}</div>
-                                <span class="author-name-sm">{{ artigo.id_fk_autor.nome }}</span>
-                            </div>
-                            <span class="read-more-link">Ler <i class="bi bi-arrow-right"></i></span>
-                        </div>
+                <div class="card-body-custom d-flex flex-column flex-grow-1">
+                    <div class="card-meta">
+                        <span><i class="bi bi-calendar3"></i> {{ artigo.data_publicacao|date:"d M Y" }}</span>
+                        <span class="badge bg-secondary opacity-75">{{ artigo.id_fk_eixo.nome }}</span>
                     </div>
-                </a>
-            </div>
+
+                    <h4 class="card-title-custom">{{ artigo.texto|striptags|safe|truncatechars:50 }}</h4>
+                    <p class="card-preview-text">{{ artigo.texto|striptags|safe|truncatechars:120 }}</p>
+
+                    <div class="card-footer-custom mt-auto">
+                        <div class="author-info">
+                            <div class="author-avatar-sm">{{ artigo.id_fk_autor.nome|slice:":2"|upper }}</div>
+                            <span class="author-name-sm">{{ artigo.id_fk_autor.nome }}</span>
+                        </div>
+                        <span class="read-more-link">Ler <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </div>
+            </a>
+        </div>
         {% empty %}
-            <div class="text-muted ps-3 py-3 small">
-                <i class="bi bi-info-circle me-1"></i> Nenhum artigo publicado nos últimos 7 dias.
-            </div>
+        <div class="text-muted ps-3 py-3 small">
+            <i class="bi bi-info-circle me-1"></i> Nenhum artigo publicado nos últimos 7 dias.
+        </div>
         {% endfor %}
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
-      <h3 class="section-title" id="grid-title">
-        {% if selected_eixo_id and selected_eixo_id != 1 %}Artigos Filtrados{% else %}Todos os Artigos{% endif %}
-      </h3>
+        <h3 class="section-title" id="grid-title">
+            {% if selected_eixo_id and selected_eixo_id != 1 %}Artigos Filtrados{% else %}Todos os Artigos{% endif %}
+        </h3>
     </div>
-    
+
     <div class="row g-4" id="articles-grid">
         {% for artigo in artigos %}
-            <div class="col-12 col-md-6 col-lg-4">
-                <a href="{% url 'artigo' artigo.id %}" class="article-card text-decoration-none">
-                    <div class="card-body-custom">
-                        <div class="card-meta">
-                            <span><i class="bi bi-calendar3"></i> {{ artigo.data_publicacao|date:"d M Y" }}</span>
-                            <span class="badge bg-secondary opacity-75">{{ artigo.id_fk_eixo.nome }}</span>
-                        </div>
+        <div class="col-12 col-md-6 col-lg-4 d-flex"> <a href="{% url 'artigo' artigo.id %}"
+                class="article-card text-decoration-none d-flex flex-column h-100 w-100 overflow-hidden">
+                <div class="card-image-wrapper" style="height: 200px; overflow: hidden; flex-shrink: 0;">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80"
+                        alt="Banner do artigo" class="w-100 h-100 object-fit-cover">
+                </div>
 
-                        <h4 class="card-title-custom">{{ artigo.texto|striptags|safe|truncatechars:50 }}</h4>
-                        <p class="card-preview-text">{{ artigo.texto|striptags|safe|truncatechars:120 }}</p>
-                        
-                        <div class="card-footer-custom">
-                            <div class="author-info">
-                                <div class="author-avatar-sm">{{ artigo.id_fk_autor.nome|slice:":2"|upper }}</div>
-                                <span class="author-name-sm">{{ artigo.id_fk_autor.nome }}</span>
-                            </div>
-                            <span class="read-more-link">Ler <i class="bi bi-arrow-right"></i></span>
-                        </div>
+                <div class="card-body-custom d-flex flex-column flex-grow-1">
+                    <div class="card-meta">
+                        <span><i class="bi bi-calendar3"></i> {{ artigo.data_publicacao|date:"d M Y" }}</span>
+                        <span class="badge bg-secondary opacity-75">{{ artigo.id_fk_eixo.nome }}</span>
                     </div>
-                </a>
-            </div>
+
+                    <h4 class="card-title-custom">{{ artigo.texto|striptags|safe|truncatechars:50 }}</h4>
+                    <p class="card-preview-text">{{ artigo.texto|striptags|safe|truncatechars:120 }}</p>
+
+                    <div class="card-footer-custom mt-auto">
+                        <div class="author-info">
+                            <div class="author-avatar-sm">{{ artigo.id_fk_autor.nome|slice:":2"|upper }}</div>
+                            <span class="author-name-sm">{{ artigo.id_fk_autor.nome }}</span>
+                        </div>
+                        <span class="read-more-link">Ler <i class="bi bi-arrow-right"></i></span>
+                    </div>
+                </div>
+            </a>
+        </div>
         {% empty %}
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-folder-x text-secondary display-4"></i>
-                <p class="text-secondary mt-2">Nenhum artigo encontrado para os filtros aplicados.</p>
-            </div>
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-folder-x text-secondary display-4"></i>
+            <p class="text-secondary mt-2">Nenhum artigo encontrado para os filtros aplicados.</p>
+        </div>
         {% endfor %}
     </div>
 </main>
